@@ -1,0 +1,190 @@
+
+<!-- saved from url=(0059)https://jeffrz.github.io/info3300-spr2020/ec/animation.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>INFO 3300 - Animation Challenge</title>
+
+  <link href="./INFO 3300 - Animation Challenge_files/css" rel="stylesheet">
+
+  <link rel="stylesheet" type="text/css" href="./INFO 3300 - Animation Challenge_files/normalize.css">
+  <link rel="stylesheet" type="text/css" href="./INFO 3300 - Animation Challenge_files/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="./INFO 3300 - Animation Challenge_files/custom-style.css">
+
+  <link rel="stylesheet" href="./INFO 3300 - Animation Challenge_files/default.min.css">
+  <script src="./INFO 3300 - Animation Challenge_files/highlight.min.js"></script>
+  <script src="./INFO 3300 - Animation Challenge_files/d3.v5.min.js"></script>
+  <style>
+    h4 { margin-top: 50px; }
+  </style>
+  
+  <script>
+    
+    // Generate some random points - DO NOT MODIFY
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    function getRandomPoints(number) {
+      
+      let width = 500;
+      let height = 300;
+      let widthRand = d3.randomUniform(10, width-10);
+      let heightRand = d3.randomUniform(10, height-10);
+      let colorRand = d3.randomUniform(0, 3);
+      let points = [];
+      for (let i=0; i<number; i++) {
+          points.push( { x: Math.floor( widthRand() ), 
+                         y: Math.floor( heightRand() ), 
+                         color: colorScale( Math.floor(colorRand()) )
+                       } );
+      }
+      return points;
+      
+    }
+
+  </script>
+  
+</head>
+<body>  
+  <h4> Chart 1 - Animate everything at once:</h4>
+  <svg id="chart1" width="500" height="300"><circle class="point" r="8" cx="353" cy="74" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="372" cy="58" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="447" cy="92" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="243" cy="227" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="371" cy="81" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="416" cy="121" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="29" cy="112" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="18" cy="52" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="19" cy="103" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="19" cy="279" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="415" cy="37" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="320" cy="129" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="291" cy="202" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="364" cy="26" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="203" cy="190" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="278" cy="94" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="137" cy="264" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="356" cy="48" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="271" cy="122" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="312" cy="53" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="397" cy="126" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="325" cy="176" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="52" cy="38" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="203" cy="44" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="432" cy="155" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="428" cy="134" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="58" cy="161" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="46" cy="220" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="420" cy="140" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="355" cy="81" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="10" cy="120" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="333" cy="32" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="411" cy="10" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="276" cy="77" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="385" cy="258" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="151" cy="97" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="96" cy="168" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="431" cy="49" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="371" cy="283" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="321" cy="25" style="fill: rgb(44, 160, 44);"></circle></svg>
+  <button id="animate1">Animate</button>
+  
+  <h4> Chart 2 - Animate channels by step (x, y, color):</h4>
+  <svg id="chart2" width="500" height="300"><circle class="point" r="8" cx="76" cy="197" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="34" cy="215" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="289" cy="284" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="66" cy="108" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="83" cy="57" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="296" cy="156" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="443" cy="23" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="208" cy="153" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="178" cy="167" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="174" cy="208" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="456" cy="139" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="93" cy="91" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="332" cy="146" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="444" cy="68" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="413" cy="64" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="178" cy="121" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="254" cy="252" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="465" cy="21" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="290" cy="215" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="473" cy="105" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="243" cy="132" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="18" cy="19" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="266" cy="53" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="403" cy="254" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="392" cy="26" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="127" cy="10" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="316" cy="140" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="487" cy="227" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="85" cy="180" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="293" cy="244" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="406" cy="170" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="199" cy="288" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="456" cy="15" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="480" cy="264" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="292" cy="240" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="78" cy="33" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="399" cy="228" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="409" cy="210" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="201" cy="91" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="273" cy="251" style="fill: rgb(255, 127, 14);"></circle></svg>
+  <button id="animate2">Animate</button>
+  
+  <h4> Chart 3 - Step through each point and animate:</h4>
+  <svg id="chart3" width="500" height="300"><circle class="point" r="8" cx="97" cy="41" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="117" cy="264" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="268" cy="68" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="301" cy="217" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="91" cy="159" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="104" cy="193" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="199" cy="169" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="342" cy="54" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="106" cy="284" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="397" cy="66" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="129" cy="211" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="33" cy="31" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="427" cy="242" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="183" cy="240" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="269" cy="31" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="223" cy="171" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="71" cy="154" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="51" cy="59" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="80" cy="41" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="323" cy="152" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="406" cy="268" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="37" cy="167" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="476" cy="129" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="128" cy="117" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="456" cy="268" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="323" cy="179" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="419" cy="220" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="253" cy="209" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="421" cy="208" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="257" cy="261" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="115" cy="258" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="402" cy="275" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="108" cy="139" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="209" cy="281" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="138" cy="206" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="37" cy="219" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="364" cy="237" style="fill: rgb(255, 127, 14);"></circle><circle class="point" r="8" cx="158" cy="188" style="fill: rgb(31, 119, 180);"></circle><circle class="point" r="8" cx="160" cy="17" style="fill: rgb(44, 160, 44);"></circle><circle class="point" r="8" cx="131" cy="107" style="fill: rgb(255, 127, 14);"></circle></svg>
+  <button id="animate3">Animate</button>
+  
+  
+  <script>
+  
+  let svg1 = d3.select("svg#chart1");
+  svg1.selectAll("circle.point").data( getRandomPoints(40) )
+      .join("circle")
+         .attr("class","point")
+         .attr("r", 8)
+         .attr("cx", d => d.x)
+         .attr("cy", d => d.y)
+         .style("fill", d => d.color);
+  
+  function animateChart1() {
+      // MODIFY HERE FOR YOUR ANIMATION CODE
+      // Animate everything at once
+      svg1.selectAll("circle.point").data( getRandomPoints(40) )
+          .join("circle")
+             .attr("class","point")
+             .attr("r", 8)
+             .attr("cx", d => d.x)
+             .attr("cy", d => d.y)
+             .style("fill", d => d.color);
+  }
+  d3.select("#animate1").on("click", animateChart1);  
+  
+  </script>
+  
+  
+  <script>
+  
+  let svg2 = d3.select("svg#chart2");
+  svg2.selectAll("circle.point").data( getRandomPoints(40) )
+      .join("circle")
+         .attr("class","point")
+         .attr("r", 8)
+         .attr("cx", d => d.x)
+         .attr("cy", d => d.y)
+         .style("fill", d => d.color);
+  
+
+      function animateblue() {
+        svg2.selectAll("circle.point").data( getRandomPoints(40) )
+            .join("circle")
+               .attr("class","point")
+               .attr("r", 8)
+               .transition(1000)
+               .attr("cx", d => d.x)
+               .transition(1000)
+               .attr("cy", d => d.y)
+              .transition(1000)
+               .style("fill", d => d.color);
+             ;
+  }
+
+
+  d3.select("#animate2").on("click", animateblue);  
+
+  
+  </script>
+
+
+  
+  <script>
+
+  let svg3 = d3.select("svg#chart3");
+  svg3.selectAll("circle.point").data( getRandomPoints(40) )
+      .join("circle")
+         .attr("class","point")
+         .attr("r", 8)
+         .attr("cx", d => d.x)
+         .attr("cy", d => d.y)
+         .style("fill", d => d.color);
+
+  svg3.selectAll("circle.point").data( getRandomPoints(40) )
+      .join("circle")
+         .attr("class","point")
+         .attr("r", 8)
+         .attr("cx", d => d.x)
+         .attr("cy", d => d.y)
+         .style("fill", d => d.color);
+
+
+
+  function animateChart3() {
+    svg3.selectAll("circle.point").data( getRandomPoints(40) )
+            .join("circle")
+               .attr("class","point")
+               .attr("r", 8)
+               .attr("cy", d => d.y)
+               .transition(5)
+               .delay()
+               .attr("cy", d => d.y + 10)
+              .transition(1000)
+               .style("fill", d => d.color);
+             ;
+  update();
+  }
+
+
+function update() {
+    svg3.transition()
+    .data( getRandomPoints(40) )
+            .join("circle")
+        .ease(d3.easeLinear)
+        .duration(2000)
+        .attr("cx",d=>d.x)
+
+    svg3.transition()
+    .data( getRandomPoints(40) )
+            .join("circle")
+        .ease(d3.easeLinear)
+        .duration(2000)
+        .delay(2000)
+        .attr("cy",d=>d.y)
+}
+
+
+
+    d3.select("#animate3").on("click", update);  
+
+  </script>
+
+  </div>
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+</body></html>
