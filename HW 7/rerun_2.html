@@ -1,0 +1,138 @@
+<html>
+<head> 
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<svg id ="graph" height = "300" width = "600" style = "background : #sff; margin-top: 50px"></svg>
+<style>
+.node {
+stroke: #fff;
+stroke-width: 1;
+}
+
+.link {
+stroke: "black";
+stroke-width: "2";
+stroke-opacity: "1";
+}
+line.dashed {
+stroke: #aaa;
+stroke-width: "2";
+stroke-dasharray: 2;
+}
+text.axis {
+text-anchor: end;
+font-variant: all-small-caps;
+}
+</style>
+</head>
+
+<body>
+
+<script>
+const requestData = async () => {
+const edges = await d3.csv("senate.109.rollcall.edges.csv");
+const nodes = await d3.csv("senate.109.rollcall.nodes.csv");
+const colorScale = d3.scaleOrdinal().domain(["Dem","Rep","Ind"]).range(["blue","red","yellow"]);
+
+let chartLayer = d3.select("#graph").append("g");
+let chartWidth =d3.select("#graph").attr("width");
+let chartHeight = d3.select("#graph").attr("height");
+
+
+
+node = []
+nodes.forEach( node => {
+      node.x = chartWidth/2.0 + d3.randomUniform(-200,200)();
+      node.y = chartHeight/2.0 + d3.randomUniform(-200,200)();
+
+});
+
+links = edges
+var sim = d3.forceSimulation()
+          .nodes(nodes)
+          .force("repulse", d3.forceManyBody().strength(-10) ) 
+          .force("links",   d3.forceLink().links(links).id(d=>d["icpsr"]))
+          .force("y", d3.forceY(chartHeight/2).strength(0.09)) 
+          .force("xpos",function(d,i){
+            if (d["icpsr"] = "Dem"){
+                return d3.forceX().x(chartWidth*0.25).strength(0.17)}
+            if (d["icpsr"] = "Rep"){
+                return d3.forceX().x(chartWidth*0.75).strength(0.17)}
+            if (d["icpsr"] = "Ind"){
+                return d3.forceX().x(chartWidth*0.5).strength(0.17)}
+          })
+        .on("tick", render);
+
+function render() {
+      let lines = chartLayer.selectAll(".link")
+            .data(links)
+            .join(enter => {enter.append("line")
+                          .attr("class","link")
+                          .attr("stroke","#333")
+                            }
+                  )
+            .attr("x1", d => d.source.x).attr("x2", d => d.target.x)   // Using the pointers d3.forceLink provides to access node x and y coords
+            .attr("y1", d => d.source.y).attr("y2", d => d.target.y);
+
+        let circles = chartLayer.selectAll(".node").data(nodes)
+                .join(enter => {enter.append("circle")
+                            .attr("class","node")
+                            .attr("fill",d=>colorScale(d.party))
+                            .attr("stroke", "#333")
+                            .attr("name",d=>d.name)
+                            .attr("r", 6)
+                            .attr("cx", 0)
+                            .attr("cy", 0)
+                            .call( d3.drag()
+                            .on("start",dragstart)
+                            .on("drag",dragging)
+                            .on("end",dragend) )})
+                .attr("transform", d => "translate("+d.x+","+d.y+")");
+
+
+      
+    }
+
+
+render();
+
+    var label = chartLayer.append("text").attr("name","label");
+
+    function dragstart(d) {
+      
+      if (!d3.event.active) {
+        label.text(d.name);
+        sim.alphaTarget(0.08).restart();
+      }
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+      label.attr("x",d3.event.x + 5).attr("y",d3.event.y);
+    }
+        function dragging(d) {
+              // Continue dragging
+              d.fx = d3.event.x;
+              d.fy = d3.event.y;
+              label.attr("x",d3.event.x + 5).attr("y",d3.event.y);
+              }
+        function dragend(d) {
+          if (!d3.event.active) {
+            sim.alphaTarget(0);
+            label.text("");
+            sim.alpha(1).restart(); 
+          }
+
+          d.fx = null;
+          d.fy = null;
+    }
+
+    d3.select("#tick").on("click", () => {
+      sim.tick(); 
+      render(); 
+    });
+
+  };
+
+requestData();
+
+</script>
+</body>
+</html>
