@@ -1,0 +1,199 @@
+<html>
+<head> 
+	<title>chord diagram</title>
+	 <script src="https://d3js.org/d3.v5.min.js"></script>  
+     <script src="https://d3js.org/d3-path.v1.min.js"></script>
+    <script src="https://d3js.org/d3-shape.v1.min.js"></script> 
+
+    <style>
+      #chart {
+        font: 10px sans-serif;
+      }
+
+      .chord path {
+        fill-opacity: .67;
+        stroke: #000;
+        stroke-width: .5px;
+      }
+
+      #circle circle {
+        fill: none;
+        pointer-events: all;
+      }
+
+      #circle:hover path.fade {
+        display: none;
+      }
+
+      #control {
+        position: fixed;
+        left: 20px;
+        top: 20px;
+      }
+    </style>
+</head>
+
+<body>
+    <svg id="chord" height="750" width="750" style="background: #fff; margin-top:10px" ></svg>
+<script>
+const width = d3.select("#chord").attr("width");
+const height = d3.select("#chord").attr("height");
+const chordChart = d3.select("#chord").append("g");
+  
+  
+  const drawChord = async () => {
+    const lotr = await d3.json("thrones-cooccur.json"); 
+
+    let nodes = lotr.nodes;
+    let links = lotr.edges;
+    
+
+    let matrix = [];
+    for (let i=0; i<nodes.length; i++) { 
+        let row = [];
+        for (let j=0; j<nodes.length; j++) { row.push(0); }
+        matrix.push(row);
+    }
+
+    dict = {}
+    for (let i=0; i<nodes.length; i++) { 
+        dict[nodes[i]["Name"]] = i 
+    }
+
+    for (let i=0; i<links.length; i++) { 
+        links[i]["source"] = dict[links[i]["source"]]
+        links[i]["target"] = dict[links[i]["target"]]
+        }
+
+    links.forEach( d => {
+      if (d.weight > 1) {
+        matrix[d.source][d.target] = Number(d.weight);
+        matrix[d.target][d.source] = Number(d.weight);
+      }
+    });
+    
+    let radius = 250;
+    
+    // Make a chord diagram generator
+    let chordGen = d3.chord()
+                    .padAngle(.05)
+                    .sortSubgroups(d3.descending)
+                    .sortChords(d3.descending)
+    // Make an outer arc generator
+    let arcGen = d3.arc().innerRadius(radius).outerRadius(radius + 20)
+    // Make a ribbon generator
+    let ribbonGen = d3.ribbon().radius(radius)
+
+    let chords = chordGen(matrix);
+    chordChart.attr("transform","translate("+width/2+","+height/2+")");
+
+    var colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(["Arryn", "Baelish", "Baratheon", "Bolton"
+        ,"Dothraki","Greyjoy","Lannister","Wildlings","Tyrell","Tully","Tarth","Targaryen","Stark","Smallfolk",
+        "Reed","Night's Watch","Meereen","Martell","Maester"]);
+
+    let ribbons = chordChart.append("g")
+                .selectAll("path").data(chords)
+                .join("path").attr("opacity",0.3)
+                //.attr("fill-opacity", 0.5)
+                .attr("stroke", "none")
+                //.on("mouseover", function(d, i) { mouseover(d, i, chords); })
+                .attr("fill", d => colorScale( nodes[ d.source.index ].Affiliation))
+                .attr("d", ribbonGen);
+    
+    let ring = chordChart.append("g")
+                        .selectAll("g")
+                        .data(chords.groups)
+                        .join("g");
+    
+    ring.append("path")
+      .attr("fill", d => colorScale( nodes[ d.index ].Affiliation ))
+      .attr("stroke", d => colorScale( nodes[ d.index ].Affiliation ))
+      .attr("opacity",0.5)
+      .attr("stroke-width",3)
+      .attr("d", arcGen);
+
+    
+
+    ribbons.on("mouseover",function(){
+        d3.select(this)
+            .transition().duration(200)
+            .attr("stroke","black")
+            .attr("opacity",1)
+            .attr("stroke-width",3)
+            .attr("fill",d => colorScale( nodes[ d.index ]))
+        });
+
+    ribbons.on("mouseout",function(){
+        d3.select(this)
+            .transition().duration(200)
+            .attr("stroke","black")
+            .attr("opacity",0.5)
+            .attr("stroke-width",3)
+            .attr("fill",d => colorScale( nodes[ d.index ]))
+        });
+
+    chords.groups.forEach( d => {
+      let transform = '';
+      let midpoint = (d.startAngle + d.endAngle) / 2;
+      let rotation = ( midpoint ) * ( 180 / Math.PI ) - 90;
+      transform = transform + "rotate("+ rotation +") ";
+      transform = transform + "translate("+ (radius + 25)+",0) ";
+      if (rotation > 90) {
+        transform = transform + "rotate(180)";
+        d.anchor = "end";
+      }
+      d.trans = transform;
+    });
+
+
+    ring.append("text")
+      .attr("transform", d => d.trans)
+      .text(d => nodes[ d.index ].Name )
+     .attr("text-anchor", d => d.anchor)
+     ;
+    
+    ring.on("mouseover",function(){
+    d3.select(this)
+        .transition().duration(200)
+        .attr("stroke","black")
+        .attr("opacity",0.9)
+        .attr("stroke-width",3)
+        .attr("fill",d => colorScale( nodes[ d.index ]))
+    
+    d3.select("label").append("text")
+      .attr("transform", d => d.trans)
+      .text(d => nodes[ d.index ].Name )
+     .attr("text-anchor", d => d.anchor)
+     ;
+    });
+
+    ring.on("mouseout",function(){
+        d3.select(this)
+            .transition().duration(200)
+            .attr("stroke","black")
+            .attr("opacity",0.5)
+            .attr("stroke-width",3)
+            .attr("fill",d => nodes[ d.index ])
+
+        d3.select("#label").text("")
+
+        });
+
+    function fade(opacity) {
+            return function(g, i) {
+                
+                chordChart.selectAll("path")
+                    
+                    .filter(function(d) { 
+                        console.log(d.index);
+                        return d.source.index != i && d.target.index != i; })
+                    .transition()
+                    .style("opacity", opacity);
+            };
+        }
+
+                      }
+  drawChord();
+</script>
+</body>
+</html>
