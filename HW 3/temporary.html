@@ -1,0 +1,287 @@
+<html>
+<head>
+	<title></title>
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+	<p id= "Question1">
+	<svg height="240" width="240" style="background: white"></svg>
+	<script id = "notes">
+
+		let temp = d3.select("#Question1 svg");		
+		let width = temp.attr("width");
+		let height = temp.attr("height");
+		let margins = {"top":5,"right":0,"bottom":20,"left":20};
+		let chartWidth = width - margins.left - margins.right ;
+		let chartheight = height - margins.top - margins.bottom ;
+		console.log(margins);
+
+		data = [{"x":1.0 ,"y":1.0}, 
+				{"x":2.0 ,"y":1.0},
+				{"x":3.0 ,"y":2.0}, 
+				{"x":4.0 ,"y":3.0}, 
+				{"x":4.5 ,"y":4.5}, 
+				{"x":5.0 ,"y":5.5}, 
+				{"x":5.5 ,"y":6.5}, 
+				{"x":6.0 ,"y":8.0}, 
+				{"x":7.0 ,"y":9.0}, 
+				{"x":8.0 ,"y":9.0}, 
+				{"x":9.0 ,"y":9.0}];
+		
+		let minX = d3.min(data,(d) => {return d["x"];});
+        let maxX = d3.max(data,(d) => {return d["x"];});
+		let minY = d3.min(data,(d) => {return d["y"];});
+        let maxY = d3.max(data,(d) => {return d["y"];});
+
+		console.log([minY,maxY]);
+		let x_scale = d3.scaleLinear().domain([0,10]).range([20,chartWidth]); //subtracted 20 
+        let y_scale = d3.scaleLinear().domain([0,10]).range([chartheight,5]);
+			
+		for(let i =0 ; i <data.length ; i++){
+			temp.append("line")
+				.attr("x1",x_scale(0))
+				.attr("x2",x_scale(10))
+				.attr("y1", y_scale(i))
+				.attr("y2",y_scale(i))
+				.attr("stroke","lightgrey")
+				.attr("stroke-width","1px");
+			}
+		for(let i =0 ; i <data.length ; i++){
+			temp.append("line")
+				.attr("x1",x_scale(i))
+				.attr("x2",x_scale(i))
+				.attr("y1",y_scale(0))
+				.attr("y2",y_scale(10))
+				.attr("stroke","lightgrey")
+				.attr("stroke-width","1px");
+		}
+
+		temp.selectAll("circle")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("cx", d => x_scale(d.x))
+			.attr("cy", d => y_scale(d.y))
+			.attr("r",4)
+			.attr("fill","darkblue")
+			.on("click", function(){d3.select(this).style("fill", "red ");});
+
+			//function(){d3.select(this).style("fill", "red ");}
+			
+		
+		temp.append("g")
+			.attr("transform", "translate(-1," + (chartheight) + ")").call(d3.axisBottom(x_scale).tickValues([0,5,10]));
+		temp.append("g")
+			.attr("transform", "translate(19,0)").call(d3.axisLeft(y_scale).tickValues([0,5,10]));
+		
+	//References:
+	//	1. https://stackoverflow.com/questions/39778748/back-to-path-style-color-on-click-in-d3-selectthis	
+	//	2. https://www.d3indepth.com/selections/
+	//  3. Class Notes on Feb 17th and the previous class.  
+	</script>
+	</p>
+<p id = "Question2">
+<script >
+			var svg1 = d3.select("body").append("svg").attr("width",400).attr("height",400)
+        d3.json("./diamonds.json").then(function(data){
+            data = data.filter((d)=> {return d["price"]!= null && d["price"] != 0;});
+            data = data.filter((d)=> {return d["carat"]!= null && d["carat"] != 0;});
+                const width = svg1.attr("width");
+                const height = svg1.attr("heigh");
+                const margins = {"top":5,"right":5,"bottom":5,"left":35};
+                const chartWidth = width - margins.left - margins.right ;
+                const chartheight = height - margins.top - margins.bottom ;            
+
+                const minX = d3.min(data,(d) => {return d["carat"];});
+                const maxX = d3.max(data,(d) => {return d["carat"];});
+                const minY = d3.min(data,(d) => {return d["price"];});
+                const maxY = d3.max(data,(d) => {return d["price"];});
+                console.log([minX,maxX,minY,maxY]);
+
+                let x_scale = d3.scaleLinear().domain([0,maxX]).range([5,380]);
+                let y_scale = d3.scaleLinear().domain([0,maxY]).range([395,15]);
+                
+
+            for (let i = 0; i < data.length; i++) {
+                    svg1.append("circle")
+                        .attr("cx", Math.floor(x_scale(data[i].carat)))
+                        .attr("cy", Math.floor(y_scale(data[i].price)))
+                        .attr("r", 3)
+                        .attr("opacity", 0.4)
+                        .style("fill", "darkblue");
+                }
+            let x_val = [0,1,2,3];
+            let y_val = [1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000,16000,17000,18000,19000];
+                
+                svg1.append("g")
+                    .attr("transform", "translate(0,395)")      // This controls the horizontal position of the Axis
+                    .call(d3.axisBottom(x_scale).tickValues(x_val));
+                
+                svg1.append("g")
+                    .attr("transform", "translate(5,0)")      // This controls the vertical position of the Axis
+                    .call(d3.axisLeft(y_scale).tickValues(y_val));
+
+        
+            for (let j = 0; j < y_val.length;j ++){
+                svg1.append("line")
+                    .attr("x1",x_scale(0))
+                    .attr("x2",x_scale(3))
+                    .attr("y1",y_scale(y_val[j]))
+                    .attr("y2",y_scale(y_val[j]))
+                    .attr("stroke","black")
+                    .attr("stroke-width","1");	
+	            }
+	        
+	        for (let i = 0; i < x_val.length;i ++){
+                svg1.append("line")
+                    .attr("x1",x_scale(x_val[i]))
+                    .attr("x2",x_scale(x_val[i]))
+                    .attr("y1",y_scale(2))
+                    .attr("y2",y_scale(19000))
+                    .attr("stroke","black")
+                    .attr("stroke-width","1");	
+	            }  
+	        }
+
+	            );
+
+
+	</script>
+</p>
+
+<p>Though, without calculating the R square value in between the y-x(price-carat) it is very difficult to confirm whether they actually have a linear relationship and how much. But from a visual examination it does look like when the carat value is below 1, the linearity is much more clear visible, then with increasing carat values it becomes more non-linear. This may be becuase at higher value the price may depend on more then variable which are not being considered in this plot. </p>
+
+
+<p id = "part3">
+	<script id = "notes">
+        var svg2 = d3.select("#part3").append("svg").attr("width",730).attr("height",300)        
+        d3.json("./tweets.json").then(function(data) {
+            let  width = svg2.attr("width");
+            let height = svg2.attr("heigh");
+            let margins = {"top":5,"right":5,"bottom":5,"left":5};
+            let chartWidth = width - margins.left - margins.right ;
+            let chartheight = height - margins.top - margins.bottom ;            
+         
+            let minY2 = d3.min(data,(d) => {return d["Total"];});
+			let maxY2 = d3.max(data,(d) => {return d["Total"];});
+
+            // Question states that domain is from [0-maximum value.] 
+            // Range has been reduced to 295 to accommodate for the y values,
+			let y_scale = d3.scaleLinear().domain([0,maxY2]).range([0,295]);
+            
+            //Vertical Lines 
+            for (let i = 0; i < 730; i+=31){
+                svg2.append('line')
+                    .attr("x1",i)
+                    .attr("y1",0)
+                    .attr("x2",i)
+                    .attr("y2",730)
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "lightgrey");
+            }
+
+            //Horizontal Lines 
+            for (let i = 0; i < 730; i+=15.78){
+                //console.log(i);
+                svg2.append('line')
+                    .attr("x1",0)
+                    .attr("y1",i)
+                    .attr("x2",730)
+                    .attr("y2",i)
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "lightgrey");
+            }
+            for (let i = 0; i < data.length; i++){
+				svg2.append('rect')
+					.attr("x",data[i].Number)
+					.attr("y",300-y_scale(data[i].Total))
+					.attr("width",1)
+					.attr("height",300)
+					.attr("fill","orange");
+			    }
+        
+        var svg3 = d3.select("#part3").append("svg").attr("width",730).attr("height",300)       
+		//Vertical Lines 
+            for (let i = 0; i < 730; i+=31){
+                //console.log(i);
+                svg3.append('line')
+                    .attr("x1",i)
+                    .attr("y1",0)
+                    .attr("x2",i)
+                    .attr("y2",730)
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "lightgrey");
+            }
+
+            //Horizontal Lines 
+            for (let i = 0; i < 730; i+=21.43){
+                //console.log(i);
+                svg3.append('line')
+                    .attr("x1",0)
+                    .attr("y1",i)
+                    .attr("x2",730)
+                    .attr("y2",i)
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "lightgrey");
+            }
+
+            for (let i = 0; i < data.length; i++){
+				//console.log(y_scale(data[i].Total));
+				//console.log([data[i].Number,data[i].Total]);
+				svg3.append('rect')
+					.attr("x",data[i].Number)
+					.attr("y",300-y_scale(data[i].LeftTroll))
+					.attr("width",1)
+					.attr("height",300)
+                    .attr("opacity",0.5)
+					.attr("fill","blue");
+			    }
+
+            for (let i = 0; i < data.length; i++){
+				//console.log(y_scale(data[i].Total));
+				//console.log([data[i].Number,data[i].Total]);
+				svg3.append('rect')
+					.attr("x",data[i].Number)
+					.attr("y",300-y_scale(data[i].RightTroll))
+					.attr("width",1)
+					.attr("height",300)
+                    .attr("opacity",0.5)
+					.attr("fill","red");
+			    }
+
+            
+		});
+//Refernces:
+// 1. https://stackoverflow.com/questions/52076348/d3-axis-scales-not-working-properly
+</script>
+
+
+	<ul id = "Question 4">
+		<li>
+			Part 1 :- This is a sequential scale, because of the presence of a single dominant color whose affect may be ranging in between lighter to a darker color, which in reference to current diagram refers to whiteish-green to blue respectively. The effectiveness of a particular color scale would depend on what we are trying to visualise and convey. Suppose if we are trying to show the forest cover for the whole US it should be effective, but if we are trying to show how average net worth of population changes on the same map, it would be ineffective 
+		</li>
+
+		<li>
+			Part 2:- Question specifies that a positive value is being to plot a numeric data attributes such as negative values, positive values, middle  are yellow, red and blue respectively. But there is nothing about yellow which makes it less then red or blue making it positive. So I would not recommend using this scale. 
+		</li>
+		<li>
+			Part 3:- 
+			<ol>
+				<li>Deuteranomalous:- It is considered green weak disease since the effected person loses the ability to discriminate between various hues of green. this appears because the hue shifts towards the red color.</li>
+				<li>Protanomaly:- also referred as the "red weakness" , becuase the effected person has reduced ability to view red in different color combinations like violet. Hence a color like violet, which is normally formed by red and blue, will appear to the affected person like dark blue.Similarly there is another variant of Protanomaly called as Protanopia/red blind because in which S-cone is malfunctioning.</li>
+				<li>Person with Deuteranopia is not able to distinguish between red from green. he can only distinguish between 2-3 different hues out of the total 7. This is very similar to protanope  but people don't have dimming issues.</li>
+				<li>Person with Tritanomaly or blue weak affects blue-green and yellow-red/pink colors. If we look the image from this defect you would not be able to see the entire and the green color would appear as sea blue instead.Another variant is Tritanopia in which blue color color is much more significant and original gree is becoming insignificant.  </li>
+			</ol>
+		</li>
+		<li>Part 4:- I think it would be a bad choice due to the following reasons:- 
+			<ol>
+			</li> 
+<li>Since there exist different colors representing exactly the same positive quantity, it is very hard to justify why one color is being used to signify over other. As I said in previous parts, there is no universally accepted metric to say that the colors chosen are not in anyway of higher or lower value then each other.</li> 
+			 <li>Even though it would be quicker to distinguish in between smaller cities, with wide range difference in life expectancy; since there are many colors present in the palette the reader will have to continuously refer back to the scale chart to check which color corresponds with which value.
+		</ol>
+		</li>
+		
+	</ul>
+
+</body>
+</html>
