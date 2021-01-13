@@ -1,0 +1,78 @@
+<html>
+<head>
+    <title>Question 2</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+<style>
+  .district{
+    fill: lightgrey;
+    stroke: white;
+    stroke-width : 1px: 
+  }
+  .outline{
+    fill : black;
+    stroke : white;
+    stroke-width : 1px;
+  }
+</style>
+</head>
+<body>
+<svg id="mercator" height="700" width="800" style="background: white; margin-top:50px" ></svg>
+
+<p id="Question1">
+
+<script>
+  const svg = d3.select("#mercator");
+  const width = svg.attr("width");
+  const height = svg.attr("height");
+  const margin = { top: 0, right: 0, bottom: 0, left:20};
+  const mapWidth = width - margin.left - margin.right;
+  const mapHeight = height - margin.top - margin.bottom;
+  const map = svg.append("g").attr("transform","translate("+margin.left+","+margin.top+")");
+
+  const requestData = async function() {
+  const nyd = await d3.json("new_york_districts.json");
+  var districts = topojson.feature(nyd, nyd.objects.districts);
+  var projection = d3.geoMercator().fitSize([mapWidth, mapHeight], districts);
+  var path = d3.geoPath().projection(projection);
+  var graticule = d3.geoGraticule10();
+
+    map.selectAll("path.districts").data(districts.features)
+       .join("path")
+       .attr("class", "district")
+       .attr("note", d => d.id)
+       .attr("d", path);
+
+
+    map.selectAll("path.districts").data(districts.features)
+       .join("path")
+       .attr("class", "district")
+       .attr("note", d => d.id)
+       .attr("d", path);
+
+    map.append("path") 
+        .attr( "class", "district" )
+        .attr( "d", path(d3.geoGraticule10())); 
+        
+    const colorScale = d3.scaleLinear().domain([30,50,70]).range(["#ff0000","#a9a9a9","#6495ed"]).clamp(true).interpolate(d3.interpolateHcl);
+    
+    map.selectAll("circle")
+      .data([[-76.5,42.443333]]).enter()
+      .append("circle")
+      .attr("cx", function (d) { console.log(projection(d)); return projection(d)[0]; })
+      .attr("cy", function (d) { return projection(d)[1]; })
+      .attr("r", "10")
+      .attr("fill", "white")
+      .attr("stroke","black")
+      .attr("stroke-width","1")
+
+    map.selectAll(".district")
+                  .style("fill", d => colorScale(d.properties.percent_clinton));
+
+  };
+  requestData();
+</script> 
+</p>
+
+    </body>
+</html>

@@ -1,0 +1,178 @@
+<html>
+<head>
+    <title>Question 1</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+<style>
+
+<style>
+    .country {
+      fill: lightgrey;
+      stroke: none;
+    }
+    .outline{
+      fill : black ;
+      stroke : #e0e0e0;
+      stroke-width : 1px;
+    }
+    
+    .graticule {
+      fill: none;
+      stroke: lightgrey;
+    }
+</style>
+</head>
+<body>
+<svg id="mercator" height="400" width="600" style="background: white; margin-top:10px" ></svg>
+<svg id="equalEarth" height="400" width="600" style="background: white; margin-top:10px" ></svg>
+<svg id="azimuthalEqualArea" height="400" width="600" style="background: white; margin-top:10px" ></svg>
+
+<p id="Question1">
+
+<script>
+  const svg = d3.select("#mercator");
+  const width = svg.attr("width");
+  const height = svg.attr("height");
+  const margin = { top: 20, right: 20, bottom: 20, left:20};
+  const mapWidth = width - margin.left - margin.right;
+  const mapHeight = height - margin.top - margin.bottom;
+  const map = svg.append("g").attr("transform","translate("+margin.left+","+margin.top+")");
+
+  const requestData = async function() {
+
+  const world = await d3.json("world_110m.json");
+  
+  var countries = topojson.feature(world, world.objects.countries);
+  var countriesMesh = topojson.mesh(world, world.objects.countries);
+  var projection = d3.geoMercator().fitSize([mapWidth, mapHeight], countries);
+  var path = d3.geoPath().projection(projection);
+
+  var graticule = d3.geoGraticule10();
+
+  map.append("path")
+    .datum(graticule.outline)
+    .attr("class", "graticule")
+    .attr("d", path(d3.geoGraticule10()));
+
+
+  map.selectAll("path.countries").data(countries.features)
+         .join("path")
+         .attr("class", "country")
+         .attr("note", d => d.id)
+         .attr("d", path);
+  
+  map.append("path").datum(countriesMesh)
+         .attr("class","outline")
+         .attr("d", path);
+   
+
+  const svg2 = d3.select("#equalEarth");
+  //const width = svg2.attr("width");
+  //const height = svg2.attr("height");
+  //const margin = { top: 20, right: 20, bottom: 20, left:20};
+  const map2Width2 = width - margin.left - margin.right;
+  const map2Height2 = height - margin.top - margin.bottom;
+  const map2 = svg2.append("g").attr("transform","translate("+margin.left+","+margin.top+")");
+
+  //const requestData = async function(){
+
+  const world2 = await d3.json("world_110m.json");
+  
+  const countries2 = topojson.feature(world2, world2.objects.countries);
+  const countriesMesh2 = topojson.mesh(world2, world2.objects.countries);
+  const projection2 = d3.geoEqualEarth().rotate([map2Width2, map2Height2], countries2);
+  const path2 = d3.geoPath().projection(projection2);
+
+  map2.append("path")
+    .datum(graticule.outline)
+    .attr("class", "graticule")
+    .attr("d", path2(d3.geoGraticule10()));
+
+  map2.selectAll("path.countries").data(countries2.features)
+     .join("path")
+     .attr("class", "country")
+     .attr("note", d => d.id)
+     .attr("d", path2);  
+    
+  map2.append("path").datum(countriesMesh2)
+     .attr("class","outline")
+     .attr("d", path2);
+
+
+  const svg3 = d3.select("#azimuthalEqualArea");
+  const map3Width3 = width - margin.left - margin.right;
+  const map3Height3 = height - margin.top - margin.bottom;
+  const map3 = svg3.append("g").attr("transform","translate("+margin.left+","+margin.top+")");
+
+  const world3 = await d3.json("world_110m.json");
+  const countries3 = topojson.feature(world3, world3.objects.countries);
+  const countriesMesh3 = topojson.mesh(world3, world3.objects.countries);
+  const projection3 = d3.geoAzimuthalEqualArea().fitSize([mapWidth, mapHeight], countries);
+  const path3 = d3.geoPath().projection(projection3);
+
+    map3.append("path")
+      .datum(graticule.outline)
+      .attr("class", "graticule")
+      .attr("d", path3(d3.geoGraticule10()));
+
+    map3.selectAll("path.countries").data(countries3.features)
+       .join("path")
+       .attr("class", "country")
+       .attr("note", d => d.id)
+       .attr("d", path3);
+
+      map3.append("path").datum(countriesMesh3)
+       .attr("class","outline")
+       .attr("d", path3);
+       
+  };
+  requestData();
+      
+</script> 
+</p>
+<p id = "Q1 Part D">
+  <ul>
+    <b>Mercator Projection</b>
+  </ul>
+  <ul>
+    Advantages: Since the scaling in all directions is the same, thus they are preserving 
+  </ul>
+  <ul>
+    Disadvantages: But the problem is that it may create distortion in the size of locations in maps so countries in equator map appear in proportion and sometimes even slightly samller, but on the edges the countries may appear much bigger. 
+  </ul>
+  <ul>
+  Example:- The continents which are on the edge, they apppear much bigger in proportion in comparision, since we already know that China should be larger.   
+  </ul>
+</p>
+<p id = "Q1 Part E">
+  <ul>
+    <b>geoEqualEarth Projection</b>
+  </ul>
+  <ul>
+    Advantages: The amount of distortion which this type of map entails is very limited since the scaling is accurate to scale in all directions. The area is accurate in all directions. 
+  </ul>
+  <ul>
+    Disadvantages: The issues which I can identify is that there may be some distortion caused at the end of the maps, which is at the edge of the map, this caused due to the circular nature of the map so it may be difficult to identify distance between points.
+  </ul>
+  <ul>
+  Example : This difference is clearly visible when we are trying to identify the countries in the North Half of the globe but it appears to be more accurate in the south and countries near the equator. 
+  </ul>
+</p>
+
+<p id = "Q1 Part F">
+ <ul>
+    <b>geo Azimuthal EqualArea Projection</b>
+  </ul>
+  <ul>
+    Advantages:In this mapping we represents area in all regions of the sphere
+  </ul>
+  <ul>
+    Disadvantages: This mapping does not accurately represent angles between the differnt countries. this may create issues when trying to identify different regions which may not be in the same geographical area. 
+  </ul>
+  <ul>
+  Example : If we compare North and South America we can see that both parts seem to be have a wider angle difference which is not actually true it appears to be distorted.
+  </ul>
+</p>
+
+    </body>
+</html>
