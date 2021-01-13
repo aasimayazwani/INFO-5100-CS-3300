@@ -1,0 +1,208 @@
+<html>
+        <head>
+            <title>Assignment 4</title>
+            <script src="https://d3js.org/d3.v5.min.js"></script>
+            <script src="https://unpkg.com/d3-simple-slider"></script>
+        </head>
+        <body>
+            <b>Question 1</b>
+            <p id= "Question1">
+                
+                <script>
+                    var svg1 = d3.select("body").append("svg").attr("width",800).attr("height",500)
+                    let width = svg1.attr("width");
+                    let height = svg1.attr("height");
+                    let margins = {"top":20,"right":20,"bottom":20,"left":20};
+                    let chartWidth = width - margins.left - margins.right ;
+                    let chartheight = height - margins.top - margins.bottom ;
+                    let annotations = svg1.append("g").attr("id","annotations");
+			        let chartArea = svg1.append("g").attr("id","points").attr("transform","translate("+margins.left+","+margins.top+")");
+
+                    d3.json("./wines.json").then(function(data){
+                        for(let i = 0;i < data.length;i++){
+                            data[i]["price"] =  Number(data[i]["price"].replace(/,/g,"").replace(/\$/g,""));
+                            data[i]["points"] = Number(data[i]["points"]);
+                        }
+        data = data.filter((d)=> {return d["price"] != null && d["points"] != null && d["region_1"] != "" ;});
+        data = data.filter((d)=> {return d["region_1"] != "N/A" && d["region_1"] != "NA" ;});
+        data = data.filter((d)=> {return d["state"] != "Venus" && d["state"] != "Mars" ;});
+        console.log(data.length);
+        let min_price = d3.min(data,(d) => {return d["price"];});
+        let max_price = d3.max(data,(d) => {return d["price"];});
+        let min_points = d3.min(data,(d) => {return d["points"];});
+        let max_points = d3.max(data,(d) => {return d["points"];});
+
+        let x_scale = d3.scaleLog().domain([min_price,max_price]).range([20,chartWidth]); //change it to 50
+        let y_scale = d3.scaleLog().domain([min_points,max_points]).range([chartheight-40,0]);
+        var myColor = d3.scaleOrdinal().domain(["New York","Oregon","Washington","California","Clear"]).range(["red", "gold", "green","Blue","black"])
+
+                 
+        let leftAxis = d3.axisLeft(y_scale).tickFormat(d3.format("$.0s")).ticks(10)
+        let leftGridlines = d3.axisLeft(y_scale).ticks(10).tickSize(-chartWidth).tickFormat("")
+        
+        annotations.append("g").attr("class", "y axis").attr("transform","translate("+(margins.left)+","+margins.top+")").call(leftAxis)
+        annotations.append("g").attr("class", "y gridlines").attr("transform","translate("+(margins.left)+","+margins.top+")").call(leftGridlines);
+
+                // X axis        
+        let bottomAxis      = d3.axisBottom(x_scale).ticks(10).tickFormat(d3.format("~f"));
+        let bottomGridlines = d3.axisBottom(x_scale).ticks(10).tickSize(-chartheight).tickFormat("");
+        annotations.append("g").attr("class", "x axis").attr("transform","translate("+0+","+(chartheight+margins.top-20)+")").call(bottomAxis);
+        annotations.append("g").attr("class", "x gridlines").attr("transform","translate("+0+","+(chartheight+margins.top-20)+")").call(bottomGridlines);
+        
+                
+                function jitter() {
+                    return Math.random()*(4);
+                }
+                                
+                console.log("hi");
+                let circles = chartArea.selectAll("circle").data(data)
+                         .join("circle")
+                        //.attr("cx", d=>x_scale(d['price'])  )
+                        .attr("cx", d=>x_scale(d['price'])+ jitter())
+                        .attr("cy", d=>y_scale(d['points'])+ jitter())
+                        .attr("r", 5)
+                        .style("fill", d=>myColor(d['state']))
+                        .attr("title", d=> d['title'])
+                        .attr("state",d=>d["state"])
+                        .attr("opacity", 0.8);
+                    
+                let text_var = d3.select("text").attr("x",390).attr("y",200)
+                console.log(text_var);
+                    
+                circles.on("mouseover", function() {
+                    let title = d3.select(this).datum()['title']    
+                    d3.select(this)
+                            .transition().duration(300)
+                            .attr("stroke-width",5)
+                            .attr("stroke","black")
+                            .style("fill", d=>myColor(d['state']));
+                        text_var.text(title);
+                           
+                        });                        
+
+                    circles.on("mouseout", function() {
+                        d3.select(this)
+                            .transition().duration(200)
+                            .attr("stroke-width",1)
+                            .attr("stroke","none")
+                            .style("fill", d=>myColor(d['state']));
+                            text_var.text("");  // Remove text location
+                            });
+
+                //console.log(myColor.domain())
+                myColor.domain().
+                    forEach(function(d,i) {
+                        d3.select("#scatterLegend")
+                        .append("span")
+                        .text(d)
+                        .style("color",myColor(d))
+                        .on("mouseover", function(){
+                            
+                        circles.attr("opacity", circleD => {
+                            if (d ==="Clear"){
+                                return 1 ;
+                                }
+                                else{
+                                    if (circleD["state"] ===d)
+                                        {
+                                            return 0.95;
+                                        }
+                                        else{
+                                            return 0.1;
+                                            }
+                                    }
+                                                        })
+                                                    })
+
+                                })
+                });
+        </script>	
+        <div id="scatterLegend" class="legend"> </div>
+        </p>       
+
+        <p id= "Question 1 Part 2">
+            <div><input type="range" min="0" max="100" id="slider"></div>
+            <script>
+                var svg2 = d3.select("body").append("svg").attr("width",440).attr("height",440);
+                let width2 = svg2.attr("width");
+                let height2 = svg2.attr("height");
+                let margins2 = {"top":0,"right":0,"bottom":0,"left":0};
+                let chartWidth2 = width2 - margins2.left - margins2.right ;
+                let chartheight2 = height2 - margins2.top - margins2.bottom ;
+
+                let x_scale2 = d3.scaleLinear().domain([-160,160]).range([11,429]);
+                let y_scale2 = d3.scaleLinear().domain([-160,160]).range([429,11]);
+                let annotations2 = svg2.append("g").attr("id","annotations");
+                let chartArea2 = svg2.append("g").attr("id","points").attr("transform","translate("+margins2.left+","+margins2.top+")"); 
+                
+                var data = []
+                for (let i=0; i <= 22;i++){
+                    for (let j=0; j < 21;j++){
+                        data.push({"a":Number(160-16*i),"b":Number(160-16*j)});
+                    }
+                }
+                showCircles(120);
+                function showCircles(luminosity){
+                    svg2.selectAll("circle")
+                        .data(data)
+                        .join("circle")
+                            .attr("cx", function(d) { return x_scale2(d.a); })
+                            .attr("cy", function(d) { return y_scale2(d.b); })
+                            .attr('stroke-width', "1pt")
+                            .attr('stroke', "grey")
+                            .attr("r", 10)
+                            .attr("fill", d=> d3.lab(luminosity, d.a,  d.b));
+                }
+
+                d3.select("#slider").on('input', function(){
+                        showCircles(this.value);
+                    });
+                </script>	
+        </p>
+        
+            <b>Justification for Question 1 Part A</b>
+                
+            <p id = "Question 1 Part 1" align="left">
+                <li>I have tried to remove the things which can make the question 1-2 work without errors. I have experience in using pandas libary so 
+                    I just used data.frame.unique() for tihs
+                </li>
+                <li> I began with removing all null value present in either price, points, and wine regions_1 by removing that entire row. </li>
+                <li> I am assuming that this dataset shows regions present in this planet, so I removed any rows which had entires Venus and Mars, from the dataset as well, in the column "state".</li>
+                <li>I also removed any entry which had region_1 equal to "N/A", "NA", "", since I would not have been to replace them with a mean value becuase i would not know the cause of missing value. </li>   
+       <b>Question 1 Part B</b>
+       
+            <li>From what I have understood in class I could have used either a linear or a log scaling, the most commonly used scale in class is linear scaling but using that for this particular case leads 
+                to clustering in values at the same points. However on using log scaling this problem was resolved. though this worked, we need to cautious in drwing infernce since we are not actually looking 
+                at raw data but it's log transformed data, which is giving an impression of linearity. but since this avoids cluttering/clustering of data I am using this becuase of lot of overlap in low price wines.</li>
+                
+            <li>Becuase I am using log scale for both the x and y axis I am getting very wierd results. But using this scale creates an issue that we have to create an entry for at least greater then 1, becuase any 
+            element less then one would create an issue becuse log(1) = 0, anything less then that is negative. </li>
+            <li>The problem with normal scaling is that when we try to use g append to generate the x axis and gridlines the price goes gridlines went 
+                haywire, no matter how much i tried either I could get the y axis to work or the gridlines both would never converge. It would look as though 
+                I have 2 y axis for some reason. So I just went with choosing scale.</li>
+            <li>Since I am using logarithmic scale, on the x axis it's not creating much of an issue but along the y axis 
+                I am only getting value 90$. 
+            </li>
+            <li>Also I am  not able to control the length of the vertical gridlines they are going above the length of the scaling.</li>
+
+<b>Q1 Part C:- Benifits of using jitter</b>
+        <li> I just choose colors for the circles, which are distinctly visible in comparison to each other even when there opacity is reduced.</li>
+           <li> The benifit of using jitter function is that it is generated by a random function, so even if there exists a highy clustered region there is a very high likelihood that they might not get the same jitter value, 
+               so the clustering would be reduced to a large extent. </li>
+            <li>I have used Jitter outside the scale function this is because in discussion with a TA he said that scaling creates a scale based on the true values and 
+               if you use jittered values to create the scale you might lose important information from the data. So there is a risk that when you are creating a plot if there is a points which is already on the edge it might get printed outside the svg area. </li>
+<b>Q1 Part D</b>
+<li>So if the value is not update constantly the user will not be able to see anything after 1-2 points since these poinst 
+    would pile one on top of other.
+</li>
+<li>
+    The benifit of using this is that you are basically able to visualise 3 variables by paying the price of visualising, by just hovering over these points. 
+</li>
+<b>Q1 Part E</b>
+<li>
+The problem which I faced was that I could not get the spacing in between the names of the states, if I remove the spacing in between the points, 
+it starts to create multiple copies of the state names. 
+</li>
+            </p>
+        </body>
+</html>
