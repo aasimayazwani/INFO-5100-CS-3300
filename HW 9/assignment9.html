@@ -1,0 +1,194 @@
+<html>
+<head> 
+	<title>Assignment 9</title>
+	 <script src="https://d3js.org/d3.v5.min.js"></script>  
+     <script src="https://d3js.org/d3-path.v1.min.js"></script>
+    <script src="https://d3js.org/d3-shape.v1.min.js"></script> 
+</head>
+<style>
+  .line {
+    stroke: blue;
+    fill:none;
+    stroke-width: 3;
+  }
+  
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+  }
+  
+  .axis text {
+    font-size: 10px;
+    font-family: sans-serif;
+  }
+  
+  .text-label {
+    font-size: 10px;
+    font-family: sans-serif;
+  }
+  
+</style>
+<body>
+<svg id="scatterplot" height="400" width="600" style="margin-top:50px" >
+    <text id="label" x="590" y="5"  text-anchor="end" alignment-baseline="hanging"></text>
+  
+  </svg>
+<script>
+  const svg1 = d3.select("svg#scatterplot");
+  //const svg1 = d3.select("svg#password");
+  const width = svg1.attr("width");
+  const height = svg1.attr("height");
+  const chart = svg1.append("g");
+  let margin = {"top":0,"right":50,"bottom":50,"left":50};
+  let chartWidth = width - margin.left - margin.right ;
+  let chartheight = height - margin.top - margin.bottom ;
+  let annotations = svg1.append("g").attr("id","annotations");
+  const yAxisArea = svg1.append("g").attr("transform","translate("+margin.left+","+margin.top+")");
+  const xAxisArea = svg1.append("g").attr("transform","translate("+margin.left+","+(chartheight+margin.top)+")");
+  const chartArea = svg1.append("g").attr("transform","translate("+margin.left+","+margin.top+")");
+
+
+
+d3.csv("imp2.csv", d3.autoType).then(function(data){
+
+data.forEach( (d, i) => {
+      d['strength'] = Number(d['strength']);
+      d['font_size'] = Number(d['font_size']);
+      d["density"] = Number(d['density']);
+    });
+
+const xScale = d3.scaleLinear().domain([0, 28]).range([margin.left, chartWidth]);
+const yScale = d3.scaleLinear().domain([1, 48]).range([chartheight,0]);
+const radiusScale = d3.scaleSymlog().domain([0.1, 162]).range([4, 28])
+//const myColor = d3.scaleOrdinal(d3.schemeCategory10);
+const myColor = d3.scaleSequential(d3.interpolatePuBu).domain([0,72])
+
+
+
+let yAxis = d3.axisLeft(yScale); 
+yAxisArea.append("g").attr("class", "y axis").call(yAxis);
+//yAxisArea.append("g").attr("class", "y axis").attr("transform","translate("+(margin.left)+","+margin.top+")").call(yAxis)
+
+let xAxis = d3.axisBottom(xScale); 
+xAxisArea.append("g").attr("class", "x axis").call(xAxis);
+//xAxisArea.append("g").attr("class", "x axis").attr("transform","translate("+0+","+(chartheight+margin.top-20)+")").call(xAxis);
+
+let yGridlines = d3.axisLeft(yScale).tickSize(-chartWidth).tickFormat("").ticks(10);
+yAxisArea.append("g").attr("class", "y gridlines").call(yGridlines);
+//yAxisArea.append("g").attr("class", "y gridlines").attr("transform","translate("+(margin.left)+","+margin.top+")").call(yGridlines);
+
+
+let xGridlines = d3.axisBottom(xScale).tickSize(-chartheight).tickFormat("").ticks(10);
+xAxisArea.append("g").attr("class", "x gridlines").call(xGridlines);
+//xAxisArea.append("g").attr("class", "x gridlines").attr("transform","translate("+0+","+(chartheight+margin.top-20)+")").call(xGridlines);
+
+
+
+    circle = svg1.selectAll("circle")
+          .data(data)
+          .enter()
+          .append("circle")
+          .attr("cx", d => xScale(d['font_size']))
+          .attr("cy", d => yScale(d['strength']))
+          .attr("r",d=> radiusScale(d['density']))
+          .attr("label", d=>d["density"])
+          .attr("title", d=> d['density'])
+          .attr("stroke","black")
+          .attr("stroke-width",1)
+          .attr("fill", d=>myColor(d['density']));
+
+    svg1.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width-47)
+        .attr("y", height - 6)
+        .text("Password Strength");
+
+    svg1.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", 6)
+        .attr("dy", "1em")
+        //.attr("x", width/2+100)
+        .attr("transform", "rotate(-90)")
+        .text("Password Font Size");
+
+    d3.selectAll('circle')
+      .on('mouseover', function(d, i) {
+        d3.select(this)
+          //.text(d.density)
+          .style('fill', 'orange');
+      });
+
+    d3.selectAll('circle')
+      .on('mouseout', function(d, i) {
+        d3.select(this)
+          .style('fill', d=>myColor(d['density']));
+      });
+
+
+
+var lineFunction = d3.line()
+                          .x(function(d) { return xScale(d.font_size); })
+                          .y(function(d) { return yScale(d.strength); })
+                         .curve(d3.curveBasis);
+
+//The line SVG Path we draw
+var lineGraph = svg1.append("path")
+                            .attr("d", lineFunction(data))
+                            .attr("stroke", "red")
+                            .attr("stroke-width", 2)
+                            .attr("fill", "none");
+
+
+
+    data.forEach( (d, i) => {
+
+    
+    
+    circle.on("mouseover", function() {
+            d3.select(this)
+              .transition().duration(100)
+              .attr("stroke","black")
+              .attr("stroke-width", 4)
+              .attr("fill",d=>myColor(d['density'])) ;
+              d3.select("#label").text(d.font_size);})
+          
+    circle.on("mouseout", function() {
+      d3.select(this)
+      .transition().duration(100)
+      .attr("stroke","black")
+      .attr("stroke-width", "")
+      .style('fill', d=>myColor(d['density']));
+      d3.select("#label").text("None");});
+  });
+
+  });
+
+
+
+ 
+
+</script>
+<p>
+  <li>
+    I was trying to understand how does the strength of the password vary with other variables, I began plotting variables combinations using python,
+  </li>
+  <li>
+    I  had a hunch that font_size had something to do with the strength of password. On visualising I realised that it has a almost linear relatiionship.
+  </li>
+  <li>
+    I have tried to show the density of people password usage with radius of the circles. Most of the people tend to chose a password strength of 2-9. 
+  </li>
+  <li>I have also tried to make this more visible by using the intensity of blue fill 
+    to highlight these things. Most of the people choosing a password with font_size value of close to 10. </li>
+  <li>
+    It is clear that as the length of strength of password increases people tend to have chosen an increasing length of font size variable.
+  </li>
+</p> 
+
+</body>
+</html>
+
