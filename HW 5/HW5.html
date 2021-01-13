@@ -1,0 +1,141 @@
+<html>
+<head>
+    <title>Assignment 4</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+<b>Question 1</b>
+<p id="Question1">       
+<script>
+    var svg1 = d3.select("body").append("svg").attr("width",700).attr("height",400)
+    let width = svg1.attr("width");
+    let height = svg1.attr("height");
+    let margin = {"top":20,"right":20,"bottom":50,"left":50};
+    let chartWidth = width - margin.left - margin.right ;
+    let chartHeight = height - margin.top - margin.bottom ;
+    let annotations = svg1.append("g").attr("id","annotations");
+    let chartArea = svg1.append("g").attr("id","points").attr("transform","translate("+margin.left+","+margin.top+")");
+
+    d3.json("./tweets_weekly.json").then(function(data){
+    const timeParser = d3.timeParse('%d-%m-%Y');
+    data.forEach( d => { d['Date'] = timeParser(d["Date"]);});
+
+    const dateExtent = d3.extent(data, d => d['Date']);
+    const dateScale = d3.scaleTime().domain(dateExtent).range([0,chartWidth]);  
+    
+    let min_y_news = d3.min(data,(d) => {return Number(d["NewsFeed"]);});
+    let max_y_news = d3.max(data,(d) => {return Number(d["NewsFeed"]);});
+    let min_y_non = d3.min(data,(d) => {return Number(d["NonEnglish"]);});
+    let max_y_non = d3.max(data,(d) => {return Number(d["NonEnglish"]);});
+    let min_y_gamer = d3.min(data,(d) => {return Number(d["HashtagGamer"]);});
+    let max_y_gamer = d3.max(data,(d) => {return Number(d["HashtagGamer"]);});
+    let minimum = [min_y_news,min_y_non,min_y_gamer];
+    let maximum = [max_y_news,max_y_non,max_y_gamer];
+    let min_overall = d3.min(minimum);
+    let max_overall = d3.max(maximum);
+    console.log([min_overall,max_overall]);
+    y_scale = d3.scaleLinear().domain([min_overall,max_overall+100]).range([320,65]);  
+
+    let leftAxis = d3.axisLeft(y_scale)
+    let leftGridlines = d3.axisLeft(y_scale).tickSize(-chartWidth-10).tickFormat("")
+    annotations.append("g").attr("class", "y axis").attr("transform","translate("+(margin.left-10)+","+margin.top+")")
+        .call(leftAxis)
+    let bottomAxis = d3.axisBottom(dateScale)
+    					.ticks(d3.timeMonth.every(2))
+    					//.tickFormat(d3.timeFormat("%Y-%m-%d"));
+    					.tickFormat(d3.timeFormat("%b '%y"));;
+    let bottomGridlines = d3.axisBottom(dateScale).tickSize(-chartHeight-10)
+    annotations.append("g")
+        .attr("class", "x axis")
+        .attr("transform","translate("+margin.left+","+(chartHeight+margin.top)+")")
+        .call(bottomAxis);
+
+    
+
+    var lineGen = d3.line()
+                    .x( d => dateScale(d['Date']))
+                    .y( d => y_scale(Number(d['NewsFeed'])))
+                    .curve(d3.curveStep);
+    chartArea.append("path")
+        .datum(data)
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "red")
+        .attr("stroke-width", 1)
+        .attr("d", lineGen); 
+    var lineGen = d3.line()
+                    .x( d => dateScale(d['Date']))
+                    .y( d => y_scale(Number(d['HashtagGamer'])))
+                    .curve(d3.curveStep);
+    chartArea.append("path")
+        .datum(data)
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "blue")
+        .attr("stroke-width", 1)
+        .attr("d", lineGen); 
+    var lineGen = d3.line()
+                    .x( d => dateScale(d['Date']))
+                    .y( d => y_scale(Number(d['NonEnglish'])))
+                    .curve(d3.curveStep);
+    chartArea.append("path")
+        .datum(data)
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "green")
+        .attr("stroke-width", 1)
+        .attr("d", lineGen); 
+
+///Start of Question 2 
+
+    var svg2 = d3.select("body").append("svg").attr("width",700).attr("height",400)
+    let width2 = svg2.attr("width");
+    let height2 = svg2.attr("height");
+    let margin2 = {"top":20,"right":20,"bottom":50,"left":50};
+    let chartWidth2 = width2 - margin2.left - margin2.right ;
+    let chartHeight2 = height2 - margin2.top - margin2.bottom ;
+    let annotations2 = svg2.append("g").attr("id","annotations");
+    let chartArea2 = svg2.append("g").attr("id","points").attr("transform","translate("+margin2.left+","+margin2.top+")"); 
+
+    let min_y = d3.min(data,(d) => {return Number(d["Total"]);});
+    let max_y = d3.max(data,(d) => {return Number(d["Total"]);});
+    y_scale2 = d3.scaleLinear().domain([min_y,max_y]).range([360,65]);  
+
+    const dateExtent2 = d3.extent(data, d => d['Date']);
+    const dateScale2 = d3.scaleTime().domain(dateExtent2).range([0,chartWidth2]); 
+    console.log(dateScale2);
+    svg2.append("path")
+	      .datum(data)
+	      .attr("fill", "orange")
+	      .attr("stroke", "")
+	      .attr("stroke-width", 1)
+	      .attr("d", d3.area()
+	        .x( d => dateScale2(d['Date'])+50)
+	        .y0(y_scale2(min_y)+15)
+	        //.y0(0)
+	        .y1(function(d) { return y_scale2(d["Total"]) })
+        );
+
+    let leftAxis2 = d3.axisLeft(y_scale2)
+    let leftGridlines2 = d3.axisLeft(y_scale2).tickSize(-chartWidth2-10).tickFormat("")
+    annotations2.append("g").attr("class", "y axis").attr("transform","translate("+(margin.left-10)+","+(margin.top-5)+")")
+        .call(leftAxis2)
+    let bottomAxis2 = d3.axisBottom(dateScale2)
+    					.ticks(d3.timeMonth.every(2))
+    					//.tickFormat(d3.timeFormat("%Y-%m-%d"));
+    					.tickFormat(d3.timeFormat("%b '%y"));
+    					//.ticks(d3.dateScale2)
+    					//.tickFormat(d3.dateScale2.format("%B"));
+    //let bottomGridlines2 = d3.axisBottom(dateScale2).tickSize(-chartHeight2-10)
+    
+    annotations2.append("g")
+        .attr("class", "x axis")
+        .attr("transform","translate("+margin.left+","+(chartHeight2+50)+")")
+        .call(bottomAxis2);
+ });
+
+
+               
+        </script>	
+    </body>
+</html>
