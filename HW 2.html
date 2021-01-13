@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Homework 2</title>
+</head>
+<body>
+    <h3>Name : Aasim Ayaz Wani, Net ID : aw579</h3>
+    <p id= "Question 1">
+        <svg width=200 height=200>
+            <filter id="shadowshake" height="190%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="1.5"/> 
+                <feOffset dx="4" dy="4" result="image"/> 
+                <feMerge> 
+                  <feMergeNode in="SourceGraphic"/>
+                  <feMergeNode in ="image"/> 
+                </feMerge>
+            </filter>		
+            <rect x="50" y="50" width="100" height="100" stroke="black" fill="yellow"/> 
+            <text x="100" y="100" fill="red" text-anchor="middle" style="filter:url(#shadowshake)" alignment-baseline="central"font-family="Arial">DATA</text>
+        </svg>
+    </p>
+
+    <p id= "Question 2">
+        <svg width=240 height=240>
+  
+            <!--Making verrtical gridlines-->
+          <line x1="20" y1="20" x2="20" y2="220" stroke="lightgrey" />
+          <line x1="40" y1="20" x2="40" y2="220" stroke="lightgrey" />
+          <line x1="60" y1="20" x2="60" y2="220" stroke="lightgrey" />
+          <line x1="80" y1="20" x2="80" y2="220" stroke="lightgrey" />
+          <line x1="100" y1="20" x2="100" y2="220" stroke="lightgrey" />
+          <line x1="120" y1="20" x2="120" y2="220" stroke="lightgrey" />
+          <line x1="140" y1="20" x2="140" y2="220" stroke="lightgrey" />
+          <line x1="160" y1="20" x2="160" y2="220" stroke="lightgrey" />
+          <line x1="180" y1="20" x2="180" y2="220" stroke="lightgrey" />
+          <line x1="200" y1="20" x2="200" y2="220" stroke="lightgrey" />
+          <line x1="220" y1="20" x2="220" y2="220" stroke="lightgrey" />
+        
+            <!--Making Horizontal gridlines-->
+          <line x1="20" y1="20" x2="220" y2="20" stroke="lightgrey" />
+          <line x1="20" y1="40" x2="220" y2="40" stroke="lightgrey" />
+          <line x1="20" y1="60" x2="220" y2="60" stroke="lightgrey" />
+          <line x1="20" y1="80" x2="220" y2="80" stroke="lightgrey" />
+          <line x1="20" y1="100" x2="220" y2="100" stroke="lightgrey" />
+          <line x1="20" y1="120" x2="220" y2="120" stroke="lightgrey" />
+          <line x1="20" y1="140" x2="220" y2="140" stroke="lightgrey" />
+          <line x1="20" y1="160" x2="220" y2="160" stroke="lightgrey" />
+          <line x1="20" y1="180" x2="220" y2="180" stroke="lightgrey" />
+          <line x1="20" y1="200" x2="220" y2="200" stroke="lightgrey" />
+          <line x1="20" y1="220" x2="220" y2="220" stroke="lightgrey" />
+        
+            <!--Adding the 0,5,10 digits depicted in the margin-->
+          <text x="18" y="230" fill="black" font-size="10" font-family= "Arial">0</text>
+          <text x="117" y="230" fill="black" font-size="10" font-family= "Arial">5</text>
+          <text x="215" y="230" fill="black" font-size="10" font-family= "Arial">10</text>
+        
+          <text x="10" y="123" fill="black" font-size="10" font-family= "Arial">5</text>
+          <text x="10" y="223" fill="black" font-size="10" font-family= "Arial">0</text>
+          <text x="5" y="25" fill="black" font-size="10" font-family= "Arial">10</text>
+        
+          <!--Adding points-->
+          <circle cx="200" cy="40" r="3" fill="blue" />
+          <circle cx="180" cy="40" r="3" fill="blue" />
+          <circle cx="160" cy="40" r="3" fill="blue" />
+          <circle cx="140" cy="60" r="3" fill="blue" />
+          <circle cx="40" cy="200" r="3" fill="blue" />
+          <circle cx="60" cy="200" r="3" fill="blue" />
+          <circle cx="80" cy="180" r="3" fill="blue" />
+          <circle cx="100" cy="160" r="3" fill="blue"/>
+          <circle cx="120" cy="110" r="3" fill="blue" />
+          <circle cx="130" cy="90" r="3" fill="blue" />
+          <circle cx="110" cy="130" r="3" fill="blue"/>
+        
+          </svg>
+    </p>
+
+    <p id= "Question 3">
+        <svg width=200 height=200>
+          <!--In order to make it simpler, I have enclosed all the rectangles on all four sides
+          with lines-->
+            <rect x="170" y="0" width="20" height="200"  fill="blue"/> 
+            <line x1="168" y1="0" x2="168" y2="200" stroke="black" stroke-width="2%"/>
+            <line x1="190" y1="0" x2="190" y2="200" stroke="black" stroke-width="2%"/>
+          
+            <rect x="10"  y="0"  width="18" height="200" fill="red"/>
+            <line x1="8"  y1="0" x2="8" y2="200" stroke="black" stroke-width="2%"/>
+            <line x1="30" y1="0" x2="30" y2="200" stroke="black" stroke-width="2%"/>  
+          
+            <rect x="80" y="20" width="20" height="130" fill="yellow"/>
+            <line x1="101" y1="0" x2="101" y2="200" stroke="black" stroke-width="2%"/>  
+            <line x1="78" y1="0" x2="78" y2="200" stroke="black" stroke-width="2%"/>
+          
+            <line x1="30" y1="20" x2="168" y2="20" stroke="black" stroke-width="2%"/>
+            <line x1="30" y1="150" x2="168" y2="150" stroke="black" stroke-width="2%"/>
+            <line x1="8" y1="0" x2="190" y2="0" stroke="black" stroke-width="2%"/>
+            <line x1="8" y1="200" x2="190" y2="200" stroke="black" stroke-width="2%"/>
+    
+            <line x1="150" y1="20" x2="150" y2="151" stroke="black" stroke-width="2%"/>
+            <line x1="50" y1="20" x2="50" y2="151" stroke="black" stroke-width="2%"/>
+    
+            <line x1="50" y1="71" x2="77" y2="71" stroke="black" stroke-width="2%"/>
+            <line x1="100" y1="91" x2="151" y2="91" stroke="black" stroke-width="2%"/>
+          </svg>
+    </p>
+
+    <p id= "Question 4">
+        <svg width=100 height=200>
+            <!--The quartiles have been calculated by calculating the median to split the data into 2 halves and 
+            then again finding the median of the remaining elements-->
+            <!--In some cases there was one line overlapping over the other instead of plotting on top of other I 
+            have cut each of the lines and plotted them at the same y coordinates.-->
+              <!--Making rectangle 1 -->
+              <!--Median and Mode at the same position, due to the way I have calculated quartiles-->
+              <rect x="20" y="57"  width="20" height="49" stroke="black" fill="YELLOW"/> 
+              <!--Making line connecting the top line to the rectangles--> 
+              <line x1="30" y1="57" x2="30" y2="11" stroke="black" stroke-width="1" />
+              <!--Making the ends of the whiskers / This shows maximum -->
+              <line x1="20" y1="11" x2="40" y2="11" stroke="black" stroke-width="1" />
+              <!--Making line connecting the bottom line to the rectangles--> 
+              <line x1="30" y1="106" x2="30" y2="150" stroke="black" stroke-width="1" />
+              <!--Making the ends of the whiskers bottom section / This shows minimum -->
+              <line x1="20" y1="150" x2="40" y2="150" stroke="black" stroke-width="1" />
+              <!--Making Mode  Lines-->
+              <line x1="30" y1="72" x2="40" y2="72" stroke="green" stroke-width="1" />
+              <!--Making Mean Lines-->
+              <line x1="20" y1="81.73" x2="40" y2="81.73"  stroke-width="1" stroke = "blue" />
+              <!--Making Median Lines-->
+              <line x1="20" y1="72" x2="30" y2="72" stroke-width="1" stroke = "pink"/>
+
+              <!--Making rectangle 2 -->
+              <!--Median and Mode at the same position, due to the way I have calculated quartiles-->
+              <rect x="60" y="153" width="20" height="25" stroke="black" fill="YELLOW"/> 
+              <!--Making line connecting the top line to the rectangles--> 
+              <line x1="70" y1="153" x2="70" y2="32" stroke="black" stroke-width="1"/>
+              <!--Making the ends of the whiskers / This shows maximum -->
+              <line x1="60" y1="32" x2="80" y2="32" stroke="black" stroke-width="1"/>
+              <!--Making line connecting the bottom line to the rectangles--> 
+              <line x1="70" y1="199" x2="70" y2="178" stroke="black" stroke-width="1"/>
+              <!--Making the ends of the whiskers bottom section / This shows minimum -->
+              <line x1="60" y1="199" x2="80" y2="199" stroke="black" stroke-width="1"/>
+              <!--Making Mode  Lines-->
+              <line x1="70" y1="167" x2="80" y2="167" stroke="green" stroke-width="1"/>      
+              <!--Making Mean Lines-->
+              <line x1="60" y1="151.633" x2="80" y2="151.633" stroke-width="1" stroke = "blue"/>
+              <!--Making Median Lines-->
+              <line x1="60" y1="167" x2="70" y2="167" stroke-width="1" stroke = "pink"/>
+            </svg>
+
+    </p>
+</body>
+</html>
